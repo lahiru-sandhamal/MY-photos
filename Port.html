@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Photo Portfolio — Your Name</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#9ca3af; --white:#f8fafc;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, Arial, sans-serif;margin:0;background:linear-gradient(180deg,var(--bg),#071224);color:var(--white);min-height:100vh}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;gap:1rem}
+    .brand{display:flex;align-items:center;gap:.75rem}
+    .logo{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700}
+    h1{font-size:1.05rem;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:.9rem}
+
+    main{padding:1rem 1.25rem 3rem}
+    .controls{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,.06);padding:.45rem .7rem;border-radius:8px;color:var(--white);cursor:pointer}
+    .btn.ghost{background:transparent}
+    .btn.primary{background:var(--accent);border:none;color:#042022}
+
+    /* Gallery */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.6rem}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:10px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.03)}
+    .card img{display:block;width:100%;height:160px;object-fit:cover}
+    .caption{padding:.5rem .6rem;font-size:.88rem;color:var(--muted)}
+    .card .meta{position:absolute;right:.5rem;top:.5rem;background:rgba(0,0,0,.45);padding:.25rem .35rem;border-radius:6px;font-size:.75rem}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(2,6,23,.8);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:all .18s ease}
+    .lightbox.open{opacity:1;pointer-events:auto}
+    .lightbox .panel{max-width:1100px;width:100%;max-height:90vh;background:var(--card);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+    .lightbox img{width:100%;height:auto;max-height:75vh;object-fit:contain;background:#071224}
+    .lightbox .info{display:flex;justify-content:space-between;align-items:center;padding:.6rem .9rem;background:rgba(255,255,255,0.02)}
+    .close{background:transparent;border:0;color:var(--muted);font-size:1rem;cursor:pointer}
+
+    footer{padding:1rem 1.25rem;color:var(--muted);font-size:.85rem}
+
+    @media (min-width:900px){
+      .card img{height:200px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">Y</div>
+      <div>
+        <h1>Your Name</h1>
+        <p class="lead">Photographer • Creator — simple portfolio</p>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="open-folder">Open photos folder</button>
+      <a class="btn primary" href="#" id="download-sample" download="portfolio.html">Download</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="controls">
+      <input type="text" id="search" placeholder="Search captions (try: beach, site, portrait)" class="btn" style="min-width:220px">
+      <button class="btn" id="filter-all">All</button>
+      <button class="btn" id="filter-land">Landscape</button>
+      <button class="btn" id="filter-portrait">Portrait</button>
+    </div>
+
+    <!-- Responsive Video (Netflix style) -->
+<video controls 
+style="width:100%; max-width:700px; height:auto; border-radius:12px; margin-bottom:20px;">
+  <source src="yourvideo.mp4" type="video/mp4">
+</video>
+
+
+<!-- Gallery Section -->
+<section class="grid" id="gallery" style="display:flex; flex-wrap:wrap; gap:10px;">
+
+  <figure class="card" data-tag="landscape" style="width:220px; margin:10px;">
+    <img src="photos/photo1.jpg.png" alt="Photo 1" loading="lazy"
+    style="height:180px; width:100%; object-fit:cover; border-radius:8px;">
+    <figcaption class="caption">Beach sunrise — Colombo</figcaption>
+    <div class="meta">landscape</div>
+  </figure>
+
+  <figure class="card" data-tag="portrait" style="width:220px; margin:10px;">
+    <img src="photos/photo2.jpg.png" alt="Photo 2" loading="lazy"
+    style="height:180px; width:100%; object-fit:cover; border-radius:8px;">
+    <figcaption class="caption">Portrait — Studio</figcaption>
+    <div class="meta">portrait</div>
+  </figure>
+
+  <figure class="card" data-tag="landscape" style="width:220px; margin:10px;">
+    <img src="photos/photo3.jpg" alt="Photo 3" loading="lazy"
+    style="height:180px; width:100%; object-fit:cover; border-radius:8px;">
+    <figcaption class="caption">City line</figcaption>
+    <div class="meta">landscape</div>
+  </figure>
+
+</section>
+
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-hidden="true">
+    <div class="panel">
+      <img id="lb-img" src="" alt="" />
+      <div class="info">
+        <div id="lb-caption" style="color:var(--white)"></div>
+        <div>
+          <button class="close" id="prev">◀</button>
+          <button class="close" id="next">▶</button>
+          <button class="close" id="close">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Tip: Put your photos in a folder named <strong>photos</strong> next to this HTML file. Use JPEG/PNG files and keep names like <code>photo1.jpg</code>.</footer>
+
+  <script>
+    // Simple gallery script (vanilla JS)
+    const gallery = Array.from(document.querySelectorAll('.card'));
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbCaption = document.getElementById('lb-caption');
+    let currentIndex = 0;
+
+    function openLightbox(index){
+      const card = gallery[index];
+      const img = card.querySelector('img');
+      lbImg.src = img.src;
+      lbImg.alt = img.alt || '';
+      lbCaption.textContent = card.querySelector('.caption').textContent;
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden','false');
+      currentIndex = index;
+    }
+
+    function closeLightbox(){
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+    }
+
+    gallery.forEach((card,i)=>{
+      card.addEventListener('click',()=>openLightbox(i));
+    });
+
+    document.getElementById('close').addEventListener('click',closeLightbox);
+    document.getElementById('prev').addEventListener('click',()=>{
+      openLightbox((currentIndex-1+gallery.length)%gallery.length);
+    });
+    document.getElementById('next').addEventListener('click',()=>{
+      openLightbox((currentIndex+1)%gallery.length);
+    });
+
+    window.addEventListener('keydown',e=>{
+      if(!lightbox.classList.contains('open')) return;
+      if(e.key==='Escape') closeLightbox();
+      if(e.key==='ArrowLeft') document.getElementById('prev').click();
+      if(e.key==='ArrowRight') document.getElementById('next').click();
+    });
+
+    // Search/filter
+    const search = document.getElementById('search');
+    search.addEventListener('input',() => {
+      const q = search.value.trim().toLowerCase();
+      gallery.forEach(card=>{
+        const text = card.querySelector('.caption').textContent.toLowerCase();
+        card.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
+
+    document.getElementById('filter-all').addEventListener('click',()=>{gallery.forEach(c=>c.style.display='')});
+    document.getElementById('filter-land').addEventListener('click',()=>gallery.forEach(c=>c.style.display = c.dataset.tag==='landscape' ? '' : 'none'));
+    document.getElementById('filter-portrait').addEventListener('click',()=>gallery.forEach(c=>c.style.display = c.dataset.tag==='portrait' ? '' : 'none'));
+
+    // Open folder button (helpful text) — this cannot open your local folder from the browser for security,
+    // so we show a friendly reminder instead.
+    document.getElementById('open-folder').addEventListener('click',()=>{
+      alert('Place your photos in a folder named "photos" next to this file (e.g. photos/photo1.jpg). Then refresh the page.');
+    });
+
+    // Download sample button creates a copy of this HTML for user to save
+    document.getElementById('download-sample').addEventListener('click',e=>{
+      const content = document.documentElement.outerHTML;
+      const blob = new Blob([content],{type:'text/html'});
+      const url = URL.createObjectURL(blob);
+      e.currentTarget.href = url;
+      // allow browser to revoke after a bit
+      setTimeout(()=>URL.revokeObjectURL(url),5000);
+    });
+  </script>
+</body>
+</html>
